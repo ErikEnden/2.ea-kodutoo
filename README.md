@@ -5,7 +5,7 @@ Mängu eesmärk on võimalikult kiiresti ekraanile tekkivaid sõnu ära trükkid
 ### Tähtpäev 26.03.2018 23:59
 
 ## Nõuded
-
+Nimed: Karl Erik Raid, Erik Enden, Raili miksaar
 1. Töö tuleb teha vähemalt kahekesi, eelnevalt kokkuleppel on lubatud ka kolm liiget. GitHub'is peab eristuma, kes mida tegi!
 1. README.md fail sisaldab:
     * autorite nimesid; 
