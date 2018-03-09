@@ -15,6 +15,8 @@ const TYPER = function () {
   this.wordMinLength = 5
   this.guessedWords = 0
   this.score = 0
+  this.hits = 0
+  this.misses = 0
 
   this.init()
 }
@@ -78,13 +80,14 @@ TYPER.prototype = {
       if (this.word.left.length === 0) {
         this.guessedWords += 1
         this.score += this.word.scoreVal
-        console.log(this.score)
         this.generateWord()
       }
 
       this.word.Draw()
     } else {
       this.score -= 25
+      this.misses += 1
+      console.log(this.misses)
     }
   }
 }
@@ -114,6 +117,7 @@ Word.prototype = {
 
   removeFirstLetter: function () {
     this.left = this.left.slice(1)
+    this.hits += 1
   }
 }
 
