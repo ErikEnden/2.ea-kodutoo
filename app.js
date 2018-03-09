@@ -1,4 +1,4 @@
-/* TYPER */
+/* globals typer */
 const TYPER = function () {
   if (TYPER.instance_) {
     return TYPER.instance_
@@ -14,6 +14,7 @@ const TYPER = function () {
   this.word = null
   this.wordMinLength = 5
   this.guessedWords = 0
+  this.score = 0
 
   this.init()
 }
@@ -63,8 +64,9 @@ TYPER.prototype = {
     const generatedWordLength = this.wordMinLength + parseInt(this.guessedWords / 5)
     const randomIndex = (Math.random() * (this.words[generatedWordLength].length - 1)).toFixed()
     const wordFromArray = this.words[generatedWordLength][randomIndex]
-
-    this.word = new Word(wordFromArray, this.canvas, this.ctx)
+    const scoreVal = generatedWordLength * 25
+    console.log(scoreVal)
+    this.word = new Word(wordFromArray, this.canvas, this.ctx, scoreVal)
   },
 
   keyPressed: function (event) {
@@ -75,21 +77,25 @@ TYPER.prototype = {
 
       if (this.word.left.length === 0) {
         this.guessedWords += 1
-
+        this.score += this.word.scoreVal
+        console.log(this.score)
         this.generateWord()
       }
 
       this.word.Draw()
+    } else {
+      this.score -= 25
     }
   }
 }
 
 /* WORD */
-const Word = function (word, canvas, ctx) {
+const Word = function (word, canvas, ctx, scoreVal) {
   this.word = word
   this.left = this.word
   this.canvas = canvas
   this.ctx = ctx
+  this.scoreVal = scoreVal
 }
 
 Word.prototype = {
@@ -99,6 +105,11 @@ Word.prototype = {
     this.ctx.textAlign = 'center'
     this.ctx.font = '140px Courier'
     this.ctx.fillText(this.left, this.canvas.width / 2, this.canvas.height / 2)
+
+    this.ctx.fillStyle = 'black'
+    this.ctx.textAlign = 'left'
+    this.ctx.font = '40px Arial'
+    this.ctx.fillText(typer.score, 100, 100)
   },
 
   removeFirstLetter: function () {
