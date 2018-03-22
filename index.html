@@ -3,24 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <title>typer</title>
-    <style> 
-      * {
-        margin: 0;
-        padding: 0;
-      }
-
-      html, body, canvas {
-        width: 100%;
-        height: 100%;
-      }
-      
-      canvas {
-        position: absolute;
-      }
-    </style>
     <script src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
   </head>
   <body>
+    <div id="startPage">
+      <input type="text" id="playerName">
+      <input type="radio" name="difficulty" value="easy">
+      <input type="radio" name="difficulty" value="medium">
+      <input type="radio" name="difficulty" value="hard">
+      <button id="startButton">Alusta</button>
+    </div>
     <canvas></canvas>
   </body>
 </html>

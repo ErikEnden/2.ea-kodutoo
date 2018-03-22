@@ -1,5 +1,10 @@
 /* globals typer */
-const TYPER = function () {
+let startButton
+let playerName
+let difficulty
+let timer
+
+const TYPER = function (timer) {
   if (TYPER.instance_) {
     return TYPER.instance_
   }
@@ -9,9 +14,9 @@ const TYPER = function () {
   this.HEIGHT = window.innerHeight
   this.canvas = null
   this.ctx = null
-
   this.words = []
   this.word = null
+  this.timer = timer
   this.wordMinLength = 5
   this.guessedWords = 0
   this.score = 0
@@ -33,10 +38,8 @@ TYPER.prototype = {
 
     this.canvas.width = this.WIDTH * 2
     this.canvas.height = this.HEIGHT * 2
-
     this.loadWords()
   },
-
   loadWords: function () {
     const xmlhttp = new XMLHttpRequest()
 
@@ -76,6 +79,8 @@ TYPER.prototype = {
 
     if (letter === this.word.left.charAt(0)) {
       this.word.removeFirstLetter()
+      this.hits += 1
+      console.log(this.hits)
 
       if (this.word.left.length === 0) {
         this.guessedWords += 1
@@ -104,7 +109,6 @@ const Word = function (word, canvas, ctx, scoreVal) {
 Word.prototype = {
   Draw: function () {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
     this.ctx.textAlign = 'center'
     this.ctx.font = '140px Courier'
     this.ctx.fillText(this.left, this.canvas.width / 2, this.canvas.height / 2)
@@ -117,7 +121,6 @@ Word.prototype = {
 
   removeFirstLetter: function () {
     this.left = this.left.slice(1)
-    this.hits += 1
   }
 }
 
@@ -134,8 +137,27 @@ function structureArrayByWordLength (words) {
 
   return tempArray
 }
-
+function startGame () {
+  playerName = document.getElementById('playerName').value
+  let difficultyMenu = document.getElementsByName('difficulty')
+  for (let i = 0; i < difficultyMenu.length; i++) {
+    if (difficultyMenu[i].checked) {
+      difficulty = difficultyMenu[i].value
+    }
+  }
+  if (playerName !== null) {
+    if (difficulty === 'easy') {
+      timer = 30
+    } else if (difficulty === 'medium') {
+      timer = 20
+    } else if (difficulty === 'hard') {
+      timer = 10
+    }
+    const typer = new TYPER(timer)
+    window.typer = typer
+  }
+}
 window.onload = function () {
-  const typer = new TYPER()
-  window.typer = typer
+  startButton = document.getElementById('startButton')
+  startButton.addEventListener('click', startGame)
 }
