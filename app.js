@@ -57,7 +57,6 @@ TYPER.prototype = {
     } else if (this.difficulty === 'hard') {
       this.timer = 10
     }
-    timerDebug = setInterval(function () { console.log('tick: ' + typer.timer) }, 1000)
     gameTimer = setInterval(function () { typer.incrementTimer() }, 1000)
     this.loadWords()
   },
@@ -100,28 +99,37 @@ TYPER.prototype = {
         name: this.name,
         score: this.score,
         accuracy: this.accuracy,
-        wordCount: this.guessedWords
+        wordCount: this.guessedWords,
+        difficulty: this.difficulty
       }
       scoreArr.push(newScore)
       localStorage.setItem('scores', JSON.stringify(scoreArr))
-      console.log(scoreArr)
       scoreArr = scoreArr.sort(function (a, b) { return b.score - a.score })
       for (let i = 0; i < scoreArr.length && i < 25; i++) {
-        let tableRow = document.createElement('tr')
-        let obj = scoreArr[i]
-        for (let i in obj) {
-          let tableCell = document.createElement('td')
-          let dataNode = null
-          if (i === '2') {
-            dataNode = document.createTextNode(obj[i] + '%')
-          } else {
-            dataNode = document.createTextNode(obj[i])
+        if (scoreArr[i].difficulty === this.difficulty) {
+          let tableRow = document.createElement('tr')
+          let obj = scoreArr[i]
+          for (let i in obj) {
+            let tableCell = document.createElement('td')
+            let dataNode = null
+            if (i === '2') {
+              dataNode = document.createTextNode(obj[i] + '%')
+            } else {
+              if (obj[i] === 'easy') {
+                dataNode = document.createTextNode('kerge')
+              } else if (obj[i] === 'medium') {
+                dataNode = document.createTextNode('keskmine')
+              } else if (obj[i] === 'hard') {
+                dataNode = document.createTextNode('raske')
+              } else {
+                dataNode = document.createTextNode(obj[i])
+              }
+            }
+            tableCell.appendChild(dataNode)
+            tableRow.appendChild(tableCell)
           }
-          tableCell.appendChild(dataNode)
-          tableRow.appendChild(tableCell)
+          this.table.appendChild(tableRow)
         }
-        this.table.appendChild(tableRow)
-        console.log('ayo')
       }
       document.getElementById('endPage').style.display = 'flex'
       TYPER.instance_ = null
@@ -142,7 +150,6 @@ TYPER.prototype = {
     const randomIndex = (Math.random() * (this.words[generatedWordLength].length - 1)).toFixed()
     const wordFromArray = this.words[generatedWordLength][randomIndex]
     const scoreVal = generatedWordLength * 25
-    console.log(scoreVal)
     this.word = new Word(wordFromArray, this.canvas, this.ctx, scoreVal)
   },
 
@@ -152,7 +159,6 @@ TYPER.prototype = {
     if (letter === this.word.left.charAt(0)) {
       this.word.removeFirstLetter()
       this.hits += 1
-      console.log(this.hits)
 
       if (this.word.left.length === 0) {
         this.guessedWords += 1
@@ -166,7 +172,6 @@ TYPER.prototype = {
       this.score -= 25
       this.misses += 1
       this.timer--
-      console.log(this.misses)
       this.ctx.clearRect(0, 0, 400, 200)
       this.ctx.fillText(typer.score, 100, 100)
     }
