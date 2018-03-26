@@ -24,3 +24,13 @@ canvas {
 #playerName {
   width: 50%;
 }
+#endPage {
+  display: none;
+  flex-direction: column;
+  text-align: center;
+}
+.stats {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}

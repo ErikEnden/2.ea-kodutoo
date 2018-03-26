@@ -1,6 +1,8 @@
 /* globals typer */
 let startButton
 let playerName
+let timerDebug
+let gameTimer
 
 const TYPER = function () {
   if (TYPER.instance_) {
@@ -21,6 +23,8 @@ const TYPER = function () {
   this.misses = 0
   this.timer = null
   this.difficultyMenu = null
+  this.state = null
+  this.name = null
 
   this.init()
 }
@@ -38,6 +42,7 @@ TYPER.prototype = {
     this.canvas.width = this.WIDTH * 2
     this.canvas.height = this.HEIGHT * 2
 
+    this.name = document.getElementById('playerName').value
     this.difficultyMenu = document.getElementsByName('difficulty')
     for (let i = 0; i < this.difficultyMenu.length; i++) {
       if (this.difficultyMenu[i].checked) {
@@ -51,7 +56,8 @@ TYPER.prototype = {
     } else if (this.difficulty === 'hard') {
       this.timer = 10
     }
-    this.timer = setInterval(this.timerChange(this.timer), 1000)
+    timerDebug = setInterval(function () { console.log('tick: ' + typer.timer) }, 1000)
+    gameTimer = setInterval(function () { typer.incrementTimer() }, 1000)
     this.loadWords()
   },
   loadWords: function () {
@@ -71,17 +77,27 @@ TYPER.prototype = {
     xmlhttp.open('GET', './lemmad2013.txt', true)
     xmlhttp.send()
   },
+  incrementTimer: function () {
+    if (typer.timer === 0) {
+      clearInterval(timerDebug)
+      clearInterval(gameTimer)
+      document.getElementById('canvas').style.display = 'none'
+      localStorage.setItem('playerName', this.name)
+      localStorage.setItem('score', this.score)
+      localStorage.setItem('accuracy', this.hits / (this.hits + this.misses))
+      localStorage.setItem('guessedWords', this.guessedWords)
+      document.getElementById('endPage').style.display = 'flex'
+    } else {
+      typer.timer = typer.timer - 1
+      this.ctx.clearRect(this.canvas.width - 200, 0, this.canvas.width, 200)
+      this.ctx.fillText(typer.timer, this.canvas.width - 100, 100)
+    }
+  },
   start: function () {
     this.generateWord()
     this.word.Draw()
-
+    this.ctx.fillText(this.timer, this.canvas.width - 100, 100)
     window.addEventListener('keypress', this.keyPressed.bind(this))
-  },
-  timerChange: function (timer) {
-    let currTime = timer
-    currTime -= 1
-    console.log('tick: ' + currTime)
-    return currTime
   },
   generateWord: function () {
     const generatedWordLength = this.wordMinLength + parseInt(this.guessedWords / 5)
@@ -103,6 +119,7 @@ TYPER.prototype = {
       if (this.word.left.length === 0) {
         this.guessedWords += 1
         this.score += this.word.scoreVal
+        this.timer += 5
         this.generateWord()
       }
 
@@ -110,7 +127,10 @@ TYPER.prototype = {
     } else {
       this.score -= 25
       this.misses += 1
+      this.timer--
       console.log(this.misses)
+      this.ctx.clearRect(0, 0, 200, 200)
+      this.ctx.fillText(typer.score, 100, 100)
     }
   }
 }
@@ -126,7 +146,8 @@ const Word = function (word, canvas, ctx, scoreVal) {
 
 Word.prototype = {
   Draw: function () {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.clearRect(0, 0, 200, 200)
+    this.ctx.clearRect(200, 200, this.canvas.width, this.canvas.height)
     this.ctx.textAlign = 'center'
     this.ctx.font = '140px Courier'
     this.ctx.fillText(this.left, this.canvas.width / 2, this.canvas.height / 2)
