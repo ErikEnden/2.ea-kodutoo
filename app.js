@@ -1,10 +1,8 @@
 /* globals typer */
 let startButton
 let playerName
-let difficulty
-let timer
 
-const TYPER = function (timer) {
+const TYPER = function () {
   if (TYPER.instance_) {
     return TYPER.instance_
   }
@@ -16,12 +14,13 @@ const TYPER = function (timer) {
   this.ctx = null
   this.words = []
   this.word = null
-  this.timer = timer
   this.wordMinLength = 5
   this.guessedWords = 0
   this.score = 0
   this.hits = 0
   this.misses = 0
+  this.timer = null
+  this.difficultyMenu = null
 
   this.init()
 }
@@ -38,6 +37,21 @@ TYPER.prototype = {
 
     this.canvas.width = this.WIDTH * 2
     this.canvas.height = this.HEIGHT * 2
+
+    this.difficultyMenu = document.getElementsByName('difficulty')
+    for (let i = 0; i < this.difficultyMenu.length; i++) {
+      if (this.difficultyMenu[i].checked) {
+        this.difficulty = this.difficultyMenu[i].value
+      }
+    }
+    if (this.difficulty === 'easy') {
+      this.timer = 30
+    } else if (this.difficulty === 'medium') {
+      this.timer = 20
+    } else if (this.difficulty === 'hard') {
+      this.timer = 10
+    }
+    this.timer = setInterval(this.timerChange(this.timer), 1000)
     this.loadWords()
   },
   loadWords: function () {
@@ -57,14 +71,18 @@ TYPER.prototype = {
     xmlhttp.open('GET', './lemmad2013.txt', true)
     xmlhttp.send()
   },
-
   start: function () {
     this.generateWord()
     this.word.Draw()
 
     window.addEventListener('keypress', this.keyPressed.bind(this))
   },
-
+  timerChange: function (timer) {
+    let currTime = timer
+    currTime -= 1
+    console.log('tick: ' + currTime)
+    return currTime
+  },
   generateWord: function () {
     const generatedWordLength = this.wordMinLength + parseInt(this.guessedWords / 5)
     const randomIndex = (Math.random() * (this.words[generatedWordLength].length - 1)).toFixed()
@@ -139,21 +157,10 @@ function structureArrayByWordLength (words) {
 }
 function startGame () {
   playerName = document.getElementById('playerName').value
-  let difficultyMenu = document.getElementsByName('difficulty')
-  for (let i = 0; i < difficultyMenu.length; i++) {
-    if (difficultyMenu[i].checked) {
-      difficulty = difficultyMenu[i].value
-    }
-  }
   if (playerName !== null) {
-    if (difficulty === 'easy') {
-      timer = 30
-    } else if (difficulty === 'medium') {
-      timer = 20
-    } else if (difficulty === 'hard') {
-      timer = 10
-    }
-    const typer = new TYPER(timer)
+    document.getElementById('startPage').style.display = 'none'
+    document.getElementById('canvas').style.display = 'block'
+    const typer = new TYPER()
     window.typer = typer
   }
 }

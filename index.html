@@ -8,12 +8,21 @@
   </head>
   <body>
     <div id="startPage">
-      <input type="text" id="playerName">
-      <input type="radio" name="difficulty" value="easy">
-      <input type="radio" name="difficulty" value="medium">
-      <input type="radio" name="difficulty" value="hard">
-      <button id="startButton">Alusta</button>
+      <div class="startContent">
+        <h1>Klahvimine</h1>
+        <h3>Nimi</h3>
+        <input type="text" id="playerName">
+        <div class="difficultySelector">
+          <label>Easy:</label>
+          <input type="radio" name="difficulty" value="easy">
+          <label>Medium:</label>
+          <input type="radio" name="difficulty" value="medium">
+          <label>Hard:</label>
+          <input type="radio" name="difficulty" value="hard">
+        </div>
+        <button id="startButton">Alusta</button>
+      </div>
     </div>
-    <canvas></canvas>
+    <canvas id="canvas"></canvas>
   </body>
 </html>
