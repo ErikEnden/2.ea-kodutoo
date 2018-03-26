@@ -79,7 +79,7 @@ TYPER.prototype = {
     xmlhttp.send()
   },
   incrementTimer: function () {
-    if (typer.timer === 0 || this.guessedWords === 100) {
+    if (typer.timer <= 0 || this.guessedWords === 100) {
       clearInterval(timerDebug)
       clearInterval(gameTimer)
       this.accuracy = (Math.round(this.hits / (this.hits + this.misses) * 100))
@@ -90,10 +90,10 @@ TYPER.prototype = {
       let endGuessedWords = document.getElementById('endGuessedWords')
       this.table = document.getElementById('highScores')
 
-      endName.innerHTML = this.name
-      endScore.innerHTML = this.score
-      endAccuracy.innerHTML = this.accuracy + '%'
-      endGuessedWords.innerHTML = this.guessedWords
+      endName.innerHTML = 'Nimi: ' + this.name
+      endScore.innerHTML = 'Skoor: ' + this.score
+      endAccuracy.innerHTML = 'Täpsus: ' + this.accuracy + '%'
+      endGuessedWords.innerHTML = 'Arvatud sõnad: ' + this.guessedWords
 
       let scoreArr = JSON.parse(localStorage.getItem('scores')) || []
       let newScore = {
@@ -106,7 +106,7 @@ TYPER.prototype = {
       localStorage.setItem('scores', JSON.stringify(scoreArr))
       console.log(scoreArr)
       scoreArr = scoreArr.sort(function (a, b) { return b.score - a.score })
-      for (let i = 0; i < scoreArr.length || i < 10; i++) {
+      for (let i = 0; i < scoreArr.length && i < 25; i++) {
         let tableRow = document.createElement('tr')
         let obj = scoreArr[i]
         for (let i in obj) {
@@ -167,7 +167,7 @@ TYPER.prototype = {
       this.misses += 1
       this.timer--
       console.log(this.misses)
-      this.ctx.clearRect(0, 0, 200, 200)
+      this.ctx.clearRect(0, 0, 400, 200)
       this.ctx.fillText(typer.score, 100, 100)
     }
   }
@@ -184,15 +184,15 @@ const Word = function (word, canvas, ctx, scoreVal) {
 
 Word.prototype = {
   Draw: function () {
-    this.ctx.clearRect(0, 0, 200, 200)
+    this.ctx.clearRect(0, 0, 400, 200)
     this.ctx.clearRect(200, 200, this.canvas.width, this.canvas.height)
     this.ctx.textAlign = 'center'
-    this.ctx.font = '140px Courier'
+    this.ctx.font = '140px Arial'
     this.ctx.fillText(this.left, this.canvas.width / 2, this.canvas.height / 2)
 
     this.ctx.fillStyle = 'black'
     this.ctx.textAlign = 'left'
-    this.ctx.font = '40px Arial'
+    this.ctx.font = '60px Arial'
     this.ctx.fillText(typer.score, 100, 100)
   },
 

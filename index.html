@@ -9,16 +9,17 @@
   <body>
     <div id="startPage">
       <div class="startContent">
-        <h1>Klahvimine</h1>
+        <h1 class="startHeading">Klahvimine</h1>
+        <p class="startText">Mäng, mille eesmärk on trükkida ekraanile tekkivad sõnad. Iga õigesti kirjutatud sõna annab punkte ning lisab aega, iga viga võtab punkte maha.</p>
         <h3>Nimi</h3>
         <input type="text" id="playerName">
         <div class="difficultySelector">
-          <label>Easy:</label>
-          <input type="radio" name="difficulty" value="easy">
-          <label>Medium:</label>
-          <input type="radio" name="difficulty" value="medium">
-          <label>Hard:</label>
-          <input type="radio" name="difficulty" value="hard">
+          <label>Kerge:</label>
+          <input class="difficultyBox" type="radio" name="difficulty" value="easy">
+          <label>Keskmine:</label>
+          <input class="difficultyBox" type="radio" name="difficulty" value="medium">
+          <label>Raske:</label>
+          <input class="difficultyBox" type="radio" name="difficulty" value="hard">
         </div>
         <button id="startButton">Alusta</button>
       </div>
@@ -31,6 +32,7 @@
         <span id="endAccuracy"></span>
         <span id="endGuessedWords"></span>
         <button id="reset">Alusta uuesti</button>
+        <h2 class="tableHeader">Top 25</h2>
         <table id="highScores">
           <tr>
             <th>Mängija</th>
