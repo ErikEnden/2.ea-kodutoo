@@ -1,5 +1,6 @@
 /* globals typer */
 let startButton
+let resetButton
 let playerName
 let timerDebug
 let gameTimer
@@ -78,15 +79,52 @@ TYPER.prototype = {
     xmlhttp.send()
   },
   incrementTimer: function () {
-    if (typer.timer === 0) {
+    if (typer.timer === 0 || this.guessedWords === 100) {
       clearInterval(timerDebug)
       clearInterval(gameTimer)
+      this.accuracy = (Math.round(this.hits / (this.hits + this.misses) * 100))
       document.getElementById('canvas').style.display = 'none'
-      localStorage.setItem('playerName', this.name)
-      localStorage.setItem('score', this.score)
-      localStorage.setItem('accuracy', this.hits / (this.hits + this.misses))
-      localStorage.setItem('guessedWords', this.guessedWords)
+      let endName = document.getElementById('endName')
+      let endScore = document.getElementById('endScore')
+      let endAccuracy = document.getElementById('endAccuracy')
+      let endGuessedWords = document.getElementById('endGuessedWords')
+      this.table = document.getElementById('highScores')
+
+      endName.innerHTML = this.name
+      endScore.innerHTML = this.score
+      endAccuracy.innerHTML = this.accuracy + '%'
+      endGuessedWords.innerHTML = this.guessedWords
+
+      let scoreArr = JSON.parse(localStorage.getItem('scores')) || []
+      let newScore = {
+        name: this.name,
+        score: this.score,
+        accuracy: this.accuracy,
+        wordCount: this.guessedWords
+      }
+      scoreArr.push(newScore)
+      localStorage.setItem('scores', JSON.stringify(scoreArr))
+      console.log(scoreArr)
+      scoreArr = scoreArr.sort(function (a, b) { return b.score - a.score })
+      for (let i = 0; i < scoreArr.length || i < 10; i++) {
+        let tableRow = document.createElement('tr')
+        let obj = scoreArr[i]
+        for (let i in obj) {
+          let tableCell = document.createElement('td')
+          let dataNode = null
+          if (i === '2') {
+            dataNode = document.createTextNode(obj[i] + '%')
+          } else {
+            dataNode = document.createTextNode(obj[i])
+          }
+          tableCell.appendChild(dataNode)
+          tableRow.appendChild(tableCell)
+        }
+        this.table.appendChild(tableRow)
+        console.log('ayo')
+      }
       document.getElementById('endPage').style.display = 'flex'
+      TYPER.instance_ = null
     } else {
       typer.timer = typer.timer - 1
       this.ctx.clearRect(this.canvas.width - 200, 0, this.canvas.width, 200)
@@ -119,7 +157,7 @@ TYPER.prototype = {
       if (this.word.left.length === 0) {
         this.guessedWords += 1
         this.score += this.word.scoreVal
-        this.timer += 5
+        this.timer += 1
         this.generateWord()
       }
 
@@ -176,6 +214,10 @@ function structureArrayByWordLength (words) {
 
   return tempArray
 }
+function reset () {
+  document.getElementById('startPage').style.display = 'flex'
+  document.getElementById('endPage').style.display = 'none'
+}
 function startGame () {
   playerName = document.getElementById('playerName').value
   if (playerName !== null) {
@@ -187,5 +229,7 @@ function startGame () {
 }
 window.onload = function () {
   startButton = document.getElementById('startButton')
+  resetButton = document.getElementById('reset')
   startButton.addEventListener('click', startGame)
+  resetButton.addEventListener('click', reset)
 }
