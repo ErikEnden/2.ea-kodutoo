@@ -5,6 +5,7 @@ let playerName
 let timerDebug
 let gameTimer
 
+
 const TYPER = function () {
   if (TYPER.instance_) {
     return TYPER.instance_
@@ -238,3 +239,6 @@ window.onload = function () {
   startButton.addEventListener('click', startGame)
   resetButton.addEventListener('click', reset)
 }
+
+
+
